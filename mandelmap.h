@@ -5,9 +5,9 @@
 
 typedef double FLOAT;
 
-const int BINARY_DIGITS = 12;
+const int BINARY_DIGITS = 10;
 
-const int MAX_ITER=100;
+const int MAX_ITER=256;
 
 struct pinfo
 {
@@ -17,5 +17,16 @@ struct pinfo
       long itercount;
     };
 };
+
+
+const int HEADER_LEN=4096;
+struct brotfile_header
+{
+    FLOAT startx;
+    FLOAT starty;
+    int binary_size;
+    int max_iter;
+};
+
 
 #endif

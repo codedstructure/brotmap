@@ -12,23 +12,21 @@ int mpoint(pinfo* p);
 
 int inside = 0;
 
-inline int mpoint(FLOAT r, FLOAT i, pinfo* p)
+inline void mpoint(FLOAT r, FLOAT i, pinfo* p, int old_max_iter=0)
 {
-    if (p->x == NAN) {
-        return p->itercount;
+    if (isnan(p->x)) {
+        return;
     }
     FLOAT x2, y2;
     FLOAT x = p->x;
-    FLOAT i = x;
     FLOAT y = p->y;
-    FLOAT r = y;
     int k = MAX_ITER;
     do {
         x2 = x*x;
         y2 = y*y;
         if ((x2+y2) >= 4.0) break;
         y = 2*x*y+r;
-        x = x2-y2 + i;
+        x = x2-y2+i;
     } while (--k);
 
     if (!k)
@@ -40,9 +38,8 @@ inline int mpoint(FLOAT r, FLOAT i, pinfo* p)
     else
     {
         p->x = NAN;
-        p->itercount = k;
+        p->itercount = (old_max_iter + (MAX_ITER - k));
     }
-    return MAX_ITER - k;
 }
 
 int main()
@@ -55,18 +52,21 @@ int main()
         mapsize *=2;
     }
 
-    mapsize = 9*mapsize*mapsize*sizeof(pinfo);
-    int fd = open("mandel.dat", O_RDWR|O_CREAT, 0666);
-    lseek(fd, mapsize-1, SEEK_SET);
-    write(fd, "\x00", 1);
+    mapsize = 9*mapsize*mapsize*sizeof(pinfo) + HEADER_LEN;
+    char fname[21];
+    snprintf(fname, 20, "mandel_%d.dat", BINARY_DIGITS);
+    int fd = open(fname, O_RDWR|O_CREAT, 0664);
+    ftruncate(fd, mapsize);
 
     unsigned long long z =0;
-    pinfo* fptr = (pinfo*)mmap(0, mapsize, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED|MAP_NOCACHE, fd, 0);
-    if (!fptr) {
+    void* mapping = mmap(0, mapsize, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED|MAP_NOCACHE, fd, 0);
+    if (!mapping) {
         return 1;
     }
     close(fd);
-    void* sourceBuffer = fptr;
+    brotfile_header* fheader = (brotfile_header*)(mapping);
+    pinfo* fptr = (pinfo*)((char*)mapping+HEADER_LEN);
+    void* sourceBuffer = fptr;  // for unmmaping later
 
     printf("mapped file %d at %p %llu bytes\n", fd, fptr, mapsize);
 
@@ -75,14 +75,20 @@ int main()
         for (FLOAT x=-2.0; x<1.0; x+=step)
         {
             pinfo* p=fptr++;
-            p->x = x;
-            p->y = y;
-            mpoint(p);
+            mpoint(y, x, p, fheader->max_iter);
             z++;
         }
     }
 
-    if (sourceBuffer)
+    fheader->max_iter += MAX_ITER;
+    fheader->binary_size = BINARY_DIGITS;
+
+    if (sourceBuffer) {
         munmap(sourceBuffer, mapsize);
-    printf("%llu %d\n", z, inside);
+    }
+    // print total pixels, 'inside' pixels, and area of mset based on
+    // these figures.
+    // Should be approx 1.50648
+    // https://www.fractalus.com/kerry/articles/area/mandelbrot-area.html
+    printf("%llu %d (%.6f)\n", z, inside, ((9.0*inside)/float(z)));
 }

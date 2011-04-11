@@ -14,4 +14,8 @@ mandelmap: mandelmap.cc mandelmap.cc mandelmap.h
 	g++ mandelmap.cc -fast -o mandelmap -lc
 	
 clean:
-	rm -f mandelmap make_ppm out.ppm mandel.dat
+	rm -f mandelmap make_ppm out.ppm
+
+superclean: clean
+	rm -f mandel_*.dat
+
