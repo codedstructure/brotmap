@@ -5,11 +5,11 @@
 
 typedef double FLOAT;
 
-const int BINARY_DIGITS = 14;
+const int BINARY_DIGITS = 12;
 
-const int MAX_ITER=5000;
+const int MAX_ITER=100;
 
-struct pinfo 
+struct pinfo
 {
     FLOAT x;
     union {

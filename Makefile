@@ -11,7 +11,7 @@ make_ppm: make_ppm.cc mandelmap.h
 	g++ make_ppm.cc -o make_ppm
   
 mandelmap: mandelmap.cc mandelmap.cc mandelmap.h
-	g++ mandelmap.cc -o mandelmap
+	g++ mandelmap.cc -fast -o mandelmap -lc
 	
 clean:
 	rm -f mandelmap make_ppm out.ppm mandel.dat
