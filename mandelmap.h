@@ -1,13 +1,13 @@
-// MandelMap - copyright Ben Bass 2010
+// MandelMap - copyright Ben Bass 2010-2011
 
 #ifndef MANDEL_MAP_H
 #define MANDEL_MAP_H
 
 typedef double FLOAT;
 
-const int BINARY_DIGITS = 10;
-
-const int MAX_ITER=256;
+const int BINARY_DIGITS = 11;
+const int NUM_THREADS = 2;
+const int MAX_ITER=1024;
 
 struct pinfo
 {
