@@ -1,7 +1,7 @@
-all: out.tiff
+all: out_image
 
-out.tiff: out.ppm
-	ppm2tiff out.ppm out.tiff
+out_image: out.ppm
+	which pnmtopng > /dev/null && pnmtopng out.ppm > out_image || ppm2tiff out.ppm out_image
 
 out.ppm: make_ppm mandel.dat
 	./make_ppm
@@ -16,7 +16,7 @@ mandelmap: mandelmap.cc mandelmap.cc mandelmap.h
 	g++ mandelmap.cc -Werror -O3 -o mandelmap -lc -lpthread
 	
 clean:
-	rm -f mandelmap make_ppm out.ppm out.tiff
+	rm -f mandelmap make_ppm out.ppm out_image
 
 superclean: clean
 	rm -f mandel_*.dat

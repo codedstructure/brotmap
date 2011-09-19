@@ -13,6 +13,10 @@
 
 #include <pthread.h>
 
+#ifndef MAP_NOCACHE
+#define MAP_NOCACHE 0
+#endif
+
 long mpoint(pinfo* p);
 
 long inside_points = 0;
@@ -134,7 +138,10 @@ int main()
     char fname[21];
     snprintf(fname, 20, "mandel_%d.dat", BINARY_DIGITS);
     int fd = open(fname, O_RDWR|O_CREAT, 0644);
-    ftruncate(fd, mapsize);
+    if (ftruncate(fd, mapsize) != 0) {
+        printf("ftruncate failed\n");
+        return 1;
+    }
 
     // we will use mmap to write to the data file. It makes things wonderful.
     void* mapping;
