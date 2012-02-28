@@ -3,6 +3,8 @@
 #ifndef MANDEL_MAP_H
 #define MANDEL_MAP_H
 
+#define CARDIOID_OPT
+
 typedef double FLOAT;
 
 const int BINARY_DIGITS = 11;
