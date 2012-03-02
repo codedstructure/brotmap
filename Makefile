@@ -20,4 +20,3 @@ clean:
 
 superclean: clean
 	rm -f mandel_*.dat
-

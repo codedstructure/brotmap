@@ -1,4 +1,4 @@
-// MandelMap - copyright Ben Bass 2010-2011
+// MandelMap - Ben Bass 2010-2012
 
 #ifndef MANDEL_MAP_H
 #define MANDEL_MAP_H
@@ -21,7 +21,7 @@ struct pinfo
 };
 
 
-const int HEADER_LEN=4096;
+const int HEADER_LEN=4096;  // probable page size for happiness
 struct brotfile_header
 {
     FLOAT startx;

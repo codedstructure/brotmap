@@ -13,6 +13,10 @@
 
 #include <pthread.h>
 
+#ifndef _POSIX_MAPPED_FILES
+#error "no mapped file support"
+#endif
+
 #ifndef MAP_NOCACHE
 #define MAP_NOCACHE 0
 #endif
@@ -134,7 +138,7 @@ int main()
     // floating point can exactly represent the values. Work out the
     // such a value by repeated dividing by two.
     //
-    // TODO: this is all constant, so use a bit of TMP on it.
+    // TODO: this is all constant, so use a bit of TMP on it. Just for fun
     FLOAT step = 1.0;
     unsigned long long invstep = 1;
     for (int i=0; i<BINARY_DIGITS; i++)
@@ -167,13 +171,14 @@ int main()
             MAP_FILE|MAP_SHARED|MAP_NOCACHE,
             fd, 0)))
     {
+        printf("mmap failed\n");
         return 1;
     }
     close(fd);  // we no longer need the FD when we have the mapping
 
+    void* sourceBuffer = mapping;  // for unmmaping later
     brotfile_header* fheader = (brotfile_header*)(mapping);
     pinfo* fptr = (pinfo*)((char*)mapping+HEADER_LEN);
-    void* sourceBuffer = fptr;  // for unmmaping later
 
     printf("mapped file %d at %p %llu bytes\n", fd, fptr, mapsize);
     printf("Current MAX_ITER: %d\n", fheader->max_iter);
