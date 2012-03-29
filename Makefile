@@ -6,17 +6,17 @@ out_image: out.ppm
 out.ppm: make_ppm mandel.dat
 	./make_ppm
   
-mandel.dat: mandelmap
-	time ./mandelmap
+mandel.dat: brotmap
+	time ./brotmap
 
-make_ppm: make_ppm.cc mandelmap.h
+make_ppm: make_ppm.cc brotmap.h
 	g++ make_ppm.cc -o make_ppm
   
-mandelmap: mandelmap.cc mandelmap.cc mandelmap.h
-	g++ mandelmap.cc -Werror -O3 -o mandelmap -lc -lpthread
+brotmap: brotmap.cc brotmap.h
+	g++ brotmap.cc -Werror -O3 -o brotmap -lc -lpthread
 	
 clean:
-	rm -f mandelmap make_ppm out.ppm out_image
+	rm -f brotmap make_ppm out.ppm out_image
 
 superclean: clean
 	rm -f mandel_*.dat

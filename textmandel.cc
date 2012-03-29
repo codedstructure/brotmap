@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "mandelmap.h"
+#include "brotmap.h"
 
 int mpoint(FLOAT r, FLOAT i, int maxit)
 {

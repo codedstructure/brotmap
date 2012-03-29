@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include "mandelmap.h"
+#include "brotmap.h"
 
 const int SIZE= (sizeof(pinfo)*3*(1<<BINARY_DIGITS-4));
 

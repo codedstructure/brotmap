@@ -1,9 +1,9 @@
-// MandelMap - Ben Bass 2010-2012
+// brotmap - Ben Bass 2010-2012
 
 #include <cstdio>
 #include <math.h>  // for NAN. Not in the C++ library...
 #include <cstddef>
-#include "mandelmap.h"
+#include "brotmap.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

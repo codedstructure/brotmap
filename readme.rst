@@ -1,11 +1,8 @@
 
-brotmap / mandelmap
--------------------
+brotmap
+-------
 
-This has two names, because ... well, I can't quite remember :-)
-
-It's rather on the messy side, I'll tidy it up at some point.
-The existence of this readme is a step in the right direction :-)
+*Precalculating the Mandelbrot set - because it's there*
 
 This is mostly a learning exercise for me.
 
