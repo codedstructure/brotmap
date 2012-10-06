@@ -7,7 +7,6 @@
 
 typedef double FLOAT;
 
-const int BINARY_DIGITS = 11;
 const int NUM_THREADS = 2;
 const int MAX_ITER=1024;
 
@@ -26,7 +25,7 @@ struct brotfile_header
 {
     FLOAT startx;
     FLOAT starty;
-    int binary_size;
+    int binary_digits;
     int max_iter;
 };
 

@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <math.h>  // for NAN. Not in the C++ library...
 #include <cstddef>
+#include <cstdlib>
 #include "brotmap.h"
 
 #include <sys/types.h>
@@ -21,6 +22,10 @@
 #define MAP_NOCACHE 0
 #endif
 
+#ifdef ftruncate64
+#define ftruncate ftruncate64
+#endif
+
 long mpoint(pinfo* p);
 
 long inside_points = 0;
@@ -31,6 +36,8 @@ const FLOAT MAX_X = 1.0;
 const FLOAT MIN_Y = -1.5;
 const FLOAT MAX_Y = 1.5;
 const FLOAT BAILOUT = 4.0;
+
+int BINARY_DIGITS = 10;
 
 // mpoint(real, image, ...) -> 1 if mset else 0
 inline long mpoint(FLOAT r,
@@ -132,8 +139,18 @@ void* worker_start(void* arg)
     pthread_mutex_unlock(&acc_lock);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc < 3) {
+        printf("Usage: %s DATA_FILENAMES BINARY_DIGITS\n", argv[0]);
+        return 2;
+    }
+    BINARY_DIGITS = atoi(argv[2]);
+    if (BINARY_DIGITS < 4 || BINARY_DIGITS > 24) {
+        // 24 is a bit generous, but would be nice to see :-)
+        printf("BINARY_DIGITS must be in range 4..24\n");
+        return 2;
+    }
     // for multiples of 2^-n (where n is < the number of mantissa digits)
     // floating point can exactly represent the values. Work out the
     // such a value by repeated dividing by two.
@@ -156,9 +173,16 @@ int main()
     // up nearly 10 petabytes (2^50) of storage. Much better use
     // than most of the data out there, me thinks.
     const unsigned long long mapsize = total_points*sizeof(pinfo) + HEADER_LEN;
-    char fname[21];
-    snprintf(fname, 20, "mandel_%d.dat", BINARY_DIGITS);
-    int fd = open(fname, O_RDWR|O_CREAT, 0644);
+    int fd = open(argv[1], O_RDWR|O_CREAT, 0644);
+    // TODO: read the header from the file, and if some magic constant
+    // is absent, refuse to continue (in event it already exists)
+    // Would also allow BINARY_DIGITS to be omitted if file already
+    // exists
+    if (!fd) {
+        // 24 is a bit generous, but would be nice to see :-)
+        printf("DATA_FILENAME could not be opened\n");
+        return 1;
+    }
     if (ftruncate(fd, mapsize) != 0) {
         printf("ftruncate failed\n");
         return 1;
@@ -205,7 +229,7 @@ int main()
     }
 
     fheader->max_iter += MAX_ITER;
-    fheader->binary_size = BINARY_DIGITS;
+    fheader->binary_digits = BINARY_DIGITS;
 
     if (sourceBuffer) {
         munmap(sourceBuffer, mapsize);
