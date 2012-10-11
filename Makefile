@@ -13,7 +13,7 @@ make_ppm: make_ppm.cc brotmap.h
 	g++ make_ppm.cc -o make_ppm
   
 brotmap: brotmap.cc brotmap.h
-	g++ brotmap.cc -Werror -O3 -o brotmap -lc -lpthread
+	g++ brotmap.cc worker.cc evaluate.cc -Werror -O3 -o brotmap -lc -lpthread
 	
 clean:
 	rm -f brotmap make_ppm out.ppm out_image

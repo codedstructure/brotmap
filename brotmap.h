@@ -29,5 +29,11 @@ struct brotfile_header
     int max_iter;
 };
 
+long mpoint(FLOAT r,
+            FLOAT i,
+            pinfo* p,
+            int old_max_iter=0);
+void* worker_start(void* arg);
+void worker_run(pinfo* fptr, const FLOAT step);
 
 #endif
