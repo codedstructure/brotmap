@@ -3,10 +3,11 @@
 #include <stddef.h>
 #include <pthread.h>
 
-extern int MIN_X, MIN_Y, MAX_X, MAX_Y;
-extern float STEP_SIZE;
-extern pinfo* FPTR_START;
-extern unsigned long inside_points;
+extern FLOAT MIN_X, MIN_Y, MAX_X, MAX_Y;
+extern long inside_points;
+
+pinfo* FPTR_START;
+FLOAT STEP_SIZE;
 
 pthread_mutex_t acc_lock;
 

@@ -19,10 +19,13 @@
 #define MAP_NOCACHE 0
 #endif
 
-#ifdef ftruncate64
-#define ftruncate ftruncate64
+#ifndef ftruncate64
+#define ftruncate64 ftruncate
 #endif
 
+#ifndef mmap64
+#define mmap64 mmap
+#endif
 
 long inside_points = 0;
 
@@ -33,9 +36,6 @@ FLOAT MIN_Y = -1.5;
 FLOAT MAX_Y = 1.5;
 
 int BINARY_DIGITS = 10;
-
-pinfo* FPTR_START;
-FLOAT STEP_SIZE;
 
 
 int main(int argc, char* argv[])
@@ -82,14 +82,14 @@ int main(int argc, char* argv[])
         printf("DATA_FILENAME could not be opened\n");
         return 1;
     }
-    if (ftruncate(fd, mapsize) != 0) {
+    if (ftruncate64(fd, mapsize) != 0) {
         printf("ftruncate failed\n");
         return 1;
     }
 
     // we will use mmap to write to the data file. It makes things wonderful.
     void* mapping;
-    if (NULL == (mapping = mmap(0, mapsize,
+    if (NULL == (mapping = mmap64(0, mapsize,
             PROT_READ|PROT_WRITE,
             MAP_FILE|MAP_SHARED|MAP_NOCACHE,
             fd, 0)))
