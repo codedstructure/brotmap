@@ -2,6 +2,9 @@ BUILD_DIR=build
 OUTPUT_DIR=output
 SRC_DIR=src
 
+$(shell mkdir -p $(BUILD_DIR))
+$(shell mkdir -p $(OUTPUT_DIR))
+
 CC=g++ --std=c++11 -Werror -O3 -I$(SRC_DIR)
 
 BROTMAP_FILES = brotmap.cc worker.cc evaluate.cc
