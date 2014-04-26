@@ -111,9 +111,12 @@ int main(int argc, char* argv[])
     fheader->max_iter += MAX_ITER;
     fheader->binary_digits = BINARY_DIGITS;
 
+    printf("New MAX_ITER: %d\n", fheader->max_iter);
+
     if (sourceBuffer) {
         munmap(sourceBuffer, mapsize);
     }
+
     // print total pixels, 'inside' pixels, and area of mset based on
     // these figures.
     // Should be approx 1.50648
