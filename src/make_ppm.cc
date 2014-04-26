@@ -1,7 +1,7 @@
 #include "brotmap.h"
 #include "colourmap.h"
 #include <cstdio>
-#include <cmath>
+#include <math.h>
 #include <string>
 
 using namespace std;
