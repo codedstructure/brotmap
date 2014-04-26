@@ -36,6 +36,8 @@ void* worker_start(void* arg)
     pthread_mutex_lock(&acc_lock);
     inside_points += local_inside;
     pthread_mutex_unlock(&acc_lock);
+
+    return 0;
 }
 
 void worker_run(pinfo* fptr, const FLOAT step) {

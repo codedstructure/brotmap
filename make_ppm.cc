@@ -1,47 +1,83 @@
-#include <stdio.h>
-#include <math.h>
 #include "brotmap.h"
+#include <cstdio>
+#include <cmath>
+#include <string>
 
+using namespace std;
+
+class BrotMapFile {
+    public:
+        BrotMapFile (string filename);
+
+        int getMaxIter() const;
+        int getBinaryDigits() const;
+        int getImageSize() const;
+
+        pinfo nextPoint();
+
+    private:
+        FILE* bfile;
+        brotfile_header fheader;
+};
+
+BrotMapFile::BrotMapFile(string filename) {
+    bfile = fopen(filename.c_str(), "rb");
+    fread(&fheader, sizeof(brotfile_header), 1, bfile);
+    // we reserve some space for the header, need to skip that
+    fseek(bfile, HEADER_LEN, SEEK_SET);
+}
+
+int BrotMapFile::getMaxIter() const {
+    return fheader.max_iter;
+}
+
+int BrotMapFile::getBinaryDigits() const {
+    return fheader.binary_digits;
+}
+
+int BrotMapFile::getImageSize() const {
+    return (sizeof(pinfo)*3*(1<<(getBinaryDigits()-4)));
+}
+
+pinfo BrotMapFile::nextPoint() {
+    pinfo indata;
+    fread(&indata, sizeof(pinfo), 1, bfile);
+    return indata;
+};
 
 int main(int argc, char *argv[])
 {
     pinfo indata;
-    brotfile_header fheader;
 
     if (argc < 2) {
         printf("Usage: make_ppm.cc input file");
         return 2;
     }
 
-    char* fname = argv[1];
-    FILE* inf = fopen(fname, "rb");
-    fread(&fheader, sizeof(brotfile_header), 1, inf);
-    printf("max_iter: %d\n", fheader.max_iter);
+    BrotMapFile bmf(argv[1]);
 
-    const int BINARY_DIGITS = fheader.binary_digits;
-    const int SIZE = (sizeof(pinfo)*3*(1<<BINARY_DIGITS-4));
+    printf("max_iter: %d\n", bmf.getMaxIter());
+
+    int image_size = bmf.getImageSize();
+    int max_iter = bmf.getMaxIter();
 
     FILE* outf = fopen("out.ppm", "wb");
-    fprintf(outf, "P6\n%d\n%d\n255\n", SIZE, SIZE);
-    fseek(inf, HEADER_LEN, SEEK_SET);
-    for (int row=0; row<SIZE; row++)
+    fprintf(outf, "P6\n%d\n%d\n255\n", image_size, image_size);
+    for (int pix=0; pix < (image_size * image_size); pix++)
     {
-        for (int col=0; col<SIZE; col++)
+        indata = bmf.nextPoint();
+        if (isnan(indata.x))
         {
-            fread(&indata, sizeof(pinfo), 1, inf);
-            if (isnan(indata.x))
-            {
-                unsigned char zz = (fheader.max_iter - indata.itercount) % 256;
-                putc(zz, outf);
-                putc(zz, outf);
-                putc(zz, outf);
-            }
-            else
-            {
-                putc(0, outf);
-                putc(0, outf);
-                putc(0, outf);
-            }
+            unsigned char zz = (max_iter - indata.itercount) % 256;
+            putc(zz, outf);
+            putc(zz, outf);
+            putc(zz, outf);
+        }
+        else
+        {
+            putc(100, outf);
+            putc(0, outf);
+            putc(0, outf);
         }
     }
 }
