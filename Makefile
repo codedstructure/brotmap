@@ -1,22 +1,45 @@
-all: out_image
+BUILD_DIR=build
+OUTPUT_DIR=output
+SRC_DIR=src
 
-out_image: out.ppm
-	which pnmtopng > /dev/null && pnmtopng out.ppm > out_image || ppm2tiff out.ppm out_image
+CC=g++ --std=c++11 -Werror -O3 -I$(SRC_DIR)
 
-out.ppm: make_ppm mandel.dat
-	./make_ppm mandel.dat
-  
-mandel.dat: brotmap
-	rm -f x.dat && time ./brotmap mandel.dat 10
+BROTMAP_FILES = brotmap.cc worker.cc evaluate.cc
+MAKE_PPM_FILES = make_ppm.cc
+INCLUDE_FILES = brotmap.h
 
-make_ppm: src/make_ppm.cc src/brotmap.h
-	g++ --std=c++11 src/make_ppm.cc -o make_ppm
-  
-brotmap: src/brotmap.cc src/worker.cc src/evaluate.cc src/brotmap.h
-	g++ --std=c++11 src/brotmap.cc src/worker.cc src/evaluate.cc -Werror -O3 -o brotmap -lc -lpthread
-	
+BROTMAP_SRC = $(addprefix $(SRC_DIR)/,$(BROTMAP_FILES))
+MAKE_PPM_SRC = $(addprefix $(SRC_DIR)/,$(MAKE_PPM_FILES))
+INCLUDE_SRC = $(addprefix $(SRC_DIR)/,$(INCLUDE_FILES))
+
+all: $(BUILD_DIR)/make_ppm $(BUILD_DIR)/brotmap
+
+run: $(OUTPUT_DIR)/out_image
+
+$(OUTPUT_DIR):
+	-mkdir -p $(OUTPUT_DIR)
+
+$(OUTPUT_DIR)/out_image: $(OUTPUT_DIR)/out.ppm $(OUTPUT_DIR)
+	which pnmtopng > /dev/null && pnmtopng $(OUTPUT_DIR)/out.ppm > $(OUTPUT_DIR)/out_image || ppm2tiff $(OUTPUT_DIR)/out.ppm $(OUTPUT_DIR)/out_image
+
+$(OUTPUT_DIR)/out.ppm: $(BUILD_DIR)/make_ppm $(OUTPUT_DIR)/mandel.dat
+	$(BUILD_DIR)/make_ppm $(OUTPUT_DIR)/mandel.dat $(OUTPUT_DIR)/out.ppm
+
+$(OUTPUT_DIR)/mandel.dat: $(BUILD_DIR)/brotmap
+	time $(BUILD_DIR)/brotmap $(OUTPUT_DIR)/mandel.dat 10
+
+
+$(BUILD_DIR):
+	-mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/make_ppm: $(MAKE_PPM_SRC) $(INCLUDE_SRC)
+	$(CC) $(MAKE_PPM_SRC) -o $(BUILD_DIR)/make_ppm
+
+$(BUILD_DIR)/brotmap: $(BROTMAP_SRC) $(INCLUDE_SRC)
+	$(CC) $(BROTMAP_SRC) -lc -lpthread -o $(BUILD_DIR)/brotmap
+
 clean:
-	rm -f brotmap mandel.dat make_ppm out.ppm out_image
+	rm -f $(BUILD_DIR)/*
 
 superclean: clean
-	rm -f mandel*.dat
+	rm -f $(OUTPUT_DIR)/*
