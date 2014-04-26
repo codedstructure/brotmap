@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     printf("mapped file %d at %p %llu bytes\n", fd, fptr, mapsize);
     printf("Current MAX_ITER: %d\n", fheader->max_iter);
 
-    worker_run(fptr, step);
+    worker_run(fptr, step, fheader->max_iter);
 
     fheader->max_iter += MAX_ITER;
     fheader->binary_digits = BINARY_DIGITS;

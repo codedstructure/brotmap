@@ -1,4 +1,5 @@
 #include "brotmap.h"
+#include "colourmap.h"
 #include <cstdio>
 #include <cmath>
 #include <string>
@@ -66,18 +67,9 @@ int main(int argc, char *argv[])
     for (int pix=0; pix < (image_size * image_size); pix++)
     {
         indata = bmf.nextPoint();
-        if (isnan(indata.x))
-        {
-            unsigned char zz = (max_iter - indata.itercount) % 256;
-            putc(zz, outf);
-            putc(zz, outf);
-            putc(zz, outf);
-        }
-        else
-        {
-            putc(0, outf);
-            putc(0, outf);
-            putc(0, outf);
-        }
+        Colour col = colourIter(indata.itercount, max_iter, isnan(indata.x));
+        putc(col.r, outf);
+        putc(col.g, outf);
+        putc(col.b, outf);
     }
 }

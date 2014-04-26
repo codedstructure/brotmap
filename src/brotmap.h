@@ -1,4 +1,4 @@
-// MandelMap - Ben Bass 2010-2012
+// MandelMap - Ben Bass 2010-2014
 
 #ifndef MANDEL_MAP_H
 #define MANDEL_MAP_H
@@ -19,6 +19,8 @@ struct pinfo
     };
 };
 
+// check that y and itercount are the same size
+static_assert(sizeof(FLOAT) == sizeof(long), "Invalid sizeof spec");
 
 const int HEADER_LEN=4096;  // probable page size for happiness
 struct brotfile_header
@@ -32,8 +34,8 @@ struct brotfile_header
 long mpoint(FLOAT r,
             FLOAT i,
             pinfo* p,
-            int old_max_iter=0);
+            int old_max_iter);
 void* worker_start(void* arg);
-void worker_run(pinfo* fptr, const FLOAT step);
+void worker_run(pinfo* fptr, const FLOAT step, int old_max_iter);
 
 #endif

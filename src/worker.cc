@@ -8,6 +8,7 @@ extern long inside_points;
 
 pinfo* FPTR_START;
 FLOAT STEP_SIZE;
+int OLD_MAX_ITER;
 
 pthread_mutex_t acc_lock;
 
@@ -28,7 +29,7 @@ void* worker_start(void* arg)
         for (FLOAT x=MIN_X; x<MAX_X; x+=STEP_SIZE)
         {
             pinfo* p=local_fptr++;
-            local_inside += mpoint(x, y, p, MAX_ITER);
+            local_inside += mpoint(x, y, p, OLD_MAX_ITER);
         }
         // skip ahead the relevant number of lines
         local_fptr += (row_skip * (NUM_THREADS-1));
@@ -40,13 +41,14 @@ void* worker_start(void* arg)
     return 0;
 }
 
-void worker_run(pinfo* fptr, const FLOAT step) {
+void worker_run(pinfo* fptr, const FLOAT step, int old_max_iter) {
     pthread_t t_handle[NUM_THREADS];
     int t_num[NUM_THREADS];
 
     // setup global read-only vars //BADBADBAD (but could be worse)
     FPTR_START = fptr;
     STEP_SIZE = step;
+    OLD_MAX_ITER = old_max_iter;
 
     std::cout << "Using " << NUM_THREADS << " threads" << std::endl;
 
