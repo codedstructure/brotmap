@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 {
     pinfo indata;
 
-    if (argc < 2) {
-        printf("Usage: make_ppm.cc input file");
+    if (argc < 3) {
+        printf("Usage: make_ppm.cc input_file output_file\n");
         return 2;
     }
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     int image_size = bmf.getImageSize();
     int max_iter = bmf.getMaxIter();
 
-    FILE* outf = fopen("out.ppm", "wb");
+    FILE* outf = fopen(argv[2], "wb");
     fprintf(outf, "P6\n%d\n%d\n255\n", image_size, image_size);
     for (int pix=0; pix < (image_size * image_size); pix++)
     {
