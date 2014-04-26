@@ -26,3 +26,7 @@ For the future:
    postprocessed to create a mandel_(X+1).dat, by storing an offset
    of zero or 2^-(X+1) in each of the real and imaginary axes...
  - an actual command line interface, with options and everything
+
+
+This is unlicensed software, see UNLICENSE for details.
+Created by Ben Bass 2010-2014 @codedstructure

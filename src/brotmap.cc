@@ -1,4 +1,4 @@
-// brotmap - Ben Bass 2010-2012
+// brotmap - Ben Bass 2010-2014 @codedstructure
 
 #include <cstdio>
 #include <cstddef>
