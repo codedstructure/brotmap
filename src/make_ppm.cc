@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            putc(100, outf);
+            putc(0, outf);
             putc(0, outf);
             putc(0, outf);
         }

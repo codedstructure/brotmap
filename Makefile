@@ -17,20 +17,25 @@ all: $(BUILD_DIR)/make_ppm $(BUILD_DIR)/brotmap
 run: $(OUTPUT_DIR)/out_image
 
 $(OUTPUT_DIR):
-	-mkdir -p $(OUTPUT_DIR)
+	@mkdir -p $(OUTPUT_DIR)
 
 $(OUTPUT_DIR)/out_image: $(OUTPUT_DIR)/out.ppm $(OUTPUT_DIR)
-	which pnmtopng > /dev/null && pnmtopng $(OUTPUT_DIR)/out.ppm > $(OUTPUT_DIR)/out_image || ppm2tiff $(OUTPUT_DIR)/out.ppm $(OUTPUT_DIR)/out_image
+	@echo "Converting to a nicer image format..."
+	@which pnmtopng > /dev/null && pnmtopng $(OUTPUT_DIR)/out.ppm > $(OUTPUT_DIR)/out_image || ppm2tiff $(OUTPUT_DIR)/out.ppm $(OUTPUT_DIR)/out_image
+	@echo "  done."
+	@echo "check $(OUTPUT_DIR)/out_image for a Mandelbrot image file"
 
 $(OUTPUT_DIR)/out.ppm: $(BUILD_DIR)/make_ppm $(OUTPUT_DIR)/mandel.dat
-	$(BUILD_DIR)/make_ppm $(OUTPUT_DIR)/mandel.dat $(OUTPUT_DIR)/out.ppm
+	@echo "Creating PPM image from source data"
+	@$(BUILD_DIR)/make_ppm $(OUTPUT_DIR)/mandel.dat $(OUTPUT_DIR)/out.ppm
 
 $(OUTPUT_DIR)/mandel.dat: $(BUILD_DIR)/brotmap
-	time $(BUILD_DIR)/brotmap $(OUTPUT_DIR)/mandel.dat 10
+	@echo "Running brotmap to create a 1024x1024 test image..."
+	@time $(BUILD_DIR)/brotmap $(OUTPUT_DIR)/mandel.dat 10
 
 
 $(BUILD_DIR):
-	-mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/make_ppm: $(MAKE_PPM_SRC) $(INCLUDE_SRC)
 	$(CC) $(MAKE_PPM_SRC) -o $(BUILD_DIR)/make_ppm
