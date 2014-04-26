@@ -9,11 +9,11 @@ out.ppm: make_ppm mandel.dat
 mandel.dat: brotmap
 	rm -f x.dat && time ./brotmap mandel.dat 10
 
-make_ppm: make_ppm.cc brotmap.h
-	g++ --std=c++11 make_ppm.cc -o make_ppm
+make_ppm: src/make_ppm.cc src/brotmap.h
+	g++ --std=c++11 src/make_ppm.cc -o make_ppm
   
-brotmap: brotmap.cc worker.cc evaluate.cc brotmap.h
-	g++ --std=c++11 brotmap.cc worker.cc evaluate.cc -Werror -O3 -o brotmap -lc -lpthread
+brotmap: src/brotmap.cc src/worker.cc src/evaluate.cc src/brotmap.h
+	g++ --std=c++11 src/brotmap.cc src/worker.cc src/evaluate.cc -Werror -O3 -o brotmap -lc -lpthread
 	
 clean:
 	rm -f brotmap mandel.dat make_ppm out.ppm out_image
