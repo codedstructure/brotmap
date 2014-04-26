@@ -3,11 +3,12 @@
 Colour colourIter(long iterCount, int max_iter, bool non_mset) {
     if (non_mset)
     {
-        unsigned char zz = iterCount % 255;
-        return Colour({.r=zz, .g=zz, .b=zz});
+        unsigned char zr = (iterCount * 5) % 255;
+        unsigned char zg = ((iterCount + 85) / 2) % 255;
+        unsigned char zb = ((iterCount + 172) * 3) % 255;
+
+        return Colour(zr, zg, zb);
     }
-    else
-    {
-        return Colour({.r=0, .g=0, .b=0});
-    }
+
+    return Colour(0, 0, 0);
 }
